@@ -1,0 +1,69 @@
+INSERT INTO vehicles (veh_ID, veh_plate, veh_brand, veh_model, veh_color, veh_cat_ID, veh_client_ID)
+     VALUES (11, 'А123ВС55', 'Kia', 'Ceed', 'серый', 1, 2);
+psql.exe : psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:16: ОШИБКА:  повторяющееся значение ключа нарушает огр
+аничение уникальности "vehicles_uk"
+At X:\Coding\work\DBMS\rgr\run_all.ps1:51 char:13
++     $out = (& $psql @args 2>&1 | Out-String)
++             ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (psql:X:/Coding/...и "vehicles_uk":String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+�����������:  Ключ "(veh_plate)=(А123ВС55)" уже существует.
+INSERT INTO clients (cl_ID, cl_type, cl_name, cl_doc, cl_phone, cl_discount, cl_reg_date)
+     VALUES (1, 'Ф', 'Иванов Иван Иванович', '5299 000000', '+79130000000', 0, '2024-06-01');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:21: ОШИБКА:  повторяющееся значение ключа нарушает ограничение ун
+икальности "clients_pk"
+�����������:  Ключ "(cl_id)=(1)" уже существует.
+INSERT INTO vehicles (veh_ID, veh_plate, veh_brand, veh_model, veh_color, veh_cat_ID, veh_client_ID)
+     VALUES (12, 'А12ВС5', 'Kia', 'Ceed', 'серый', 1, 2);
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:26: ОШИБКА:  новая строка в отношении "vehicles" нарушает огранич
+ение-проверку "vehicles_ck_plate"
+�����������:  Ошибочная строка содержит (12, А12ВС5, Kia, Ceed, серый, 1, 2).
+UPDATE clients SET cl_discount = 50 WHERE cl_ID = 1;
+INSERT INTO payments (pay_ID, pay_receipt_no, pay_contr_ID, pay_emp_ID, pay_date, pay_sum, pay_method)
+     VALUES (17, 'КВ-000999', 1, 2, now(), -500.00, 'карта');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:30: ОШИБКА:  новая строка в отношении "clients" нарушает ограниче
+ние-проверку "clients_ck_discount"
+�����������:  Ошибочная строка содержит (1, Ф, Лебедев Игорь Олегович, 5201 334567, +79139990011, lebedev@mail.ru, 50, 
+2024-01-10).
+INSERT INTO payments (pay_ID, pay_receipt_no, pay_contr_ID, pay_emp_ID, pay_date, pay_sum, pay_method)
+     VALUES (18, 'КВ-000998', 1, 2, now(), 1000.00, 'криптовалюта');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:35: ОШИБКА:  новая строка в отношении "payments" нарушает огранич
+ение-проверку "payments_ck_sum"
+�����������:  Ошибочная строка содержит (17, КВ-000999, 1, 2, 2026-09-19 09:29:16.852818, -500.00, карта, null).
+UPDATE contracts SET contr_end = '2024-01-01' WHERE contr_ID = 1;
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:40: ОШИБКА:  новая строка в отношении "payments" нарушает огранич
+ение-проверку "payments_ck_method"
+�����������:  Ошибочная строка содержит (18, КВ-000998, 1, 2, 2026-09-19 09:29:16.853279, 1000.00, криптовалюта, null).
+UPDATE employees SET emp_chief_ID = 2 WHERE emp_ID = 2;
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:45: ОШИБКА:  новая строка в отношении "contracts" нарушает ограни
+чение-проверку "contracts_ck_dates"
+�����������:  Ошибочная строка содержит (1, Д-2024/001, 1, 1, 1, 3, 1, 2024-02-01, 2024-02-01, 2024-01-01, 25650.00, де
+йствующий).
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:50: ОШИБКА:  новая строка в отношении "employees" нарушает ограни
+чение-проверку "employees_ck_chief"
+�����������:  Ошибочная строка содержит (2, Сомова Анна Львовна, кассир, +79131110002, 2021-06-15, 2).
+INSERT INTO passages (pass_ID, pass_veh_ID, pass_contr_ID, pass_place_ID,
+                      pass_plate_raw, pass_confidence, pass_direction, pass_time, pass_gate)
+     VALUES (21, 1, 1, 1, 'А123ВС55', 0.95, 'UP', now(), 'GATE-1');
+INSERT INTO passages (pass_ID, pass_veh_ID, pass_contr_ID, pass_place_ID,
+                      pass_plate_raw, pass_confidence, pass_direction, pass_time, pass_gate)
+     VALUES (22, 1, 1, 1, 'А123ВС55', 1.500, 'IN', now(), 'GATE-1');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:56: ОШИБКА:  новая строка в отношении "passages" нарушает огранич
+ение-проверку "passages_ck_dir"
+�����������:  Ошибочная строка содержит (21, 1, 1, 1, А123ВС55, 0.950, UP, 2026-09-19 09:29:16.856642, GATE-1).
+INSERT INTO contracts (contr_ID, contr_number, contr_client_ID, contr_veh_ID, contr_place_ID,
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:63: ОШИБКА:  новая строка в отношении "passages" нарушает огранич
+ение-проверку "passages_ck_conf"
+�����������:  Ошибочная строка содержит (22, 1, 1, 1, А123ВС55, 1.500, IN, 2026-09-19 09:29:16.857036, GATE-1).
+                       contr_tariff_ID, contr_emp_ID, contr_date, contr_start, contr_end,
+                       contr_amount, contr_status)
+     VALUES (11, 'Д-2024/011', 99, 10, 10, 3, 1, '2024-06-01', '2024-06-01', '2024-09-01', 13500.00, 'оформлен');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:70: ОШИБКА:  INSERT или UPDATE в таблице "contracts" нарушает огр
+аничение внешнего ключа "contracts_fk1"
+�����������:  Ключ (contr_client_id)=(99) отсутствует в таблице "clients".
+INSERT INTO payments (pay_ID, pay_receipt_no, pay_contr_ID, pay_emp_ID, pay_date, pay_sum, pay_method)
+     VALUES (19, 'КВ-000997', 99, 2, now(), 1000.00, 'карта');
+psql:X:/Coding/work/DBMS/rgr/test/integrity_tests.sql:75: ОШИБКА:  INSERT или UPDATE в таблице "payments" нарушает огра
+ничение внешнего ключа "payments_fk1"
+�����������:  Ключ (pay_contr_id)=(99) отсутствует в таблице "contracts".

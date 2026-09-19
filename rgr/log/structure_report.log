@@ -1,0 +1,419 @@
+SELECT c.relname AS "Таблица",
+       obj_description(c.oid) AS "Комментарий"
+FROM   pg_class c
+JOIN   pg_namespace n ON n.oid = c.relnamespace
+WHERE  n.nspname = 'public' AND c.relkind = 'r'
+ORDER  BY c.relname;
+      Таблица       |                             Комментарий                             
+--------------------+---------------------------------------------------------------------
+ clients            | Клиенты автостоянки (физические и юридические лица)
+ contracts          | Договоры с клиентами
+ employees          | Сотрудники автостоянки
+ passages           | Журнал проездов: электронная регистрация по государственному номеру
+ payments           | Квитанции об оплате (допускается частичная оплата договора)
+ places             | Машино-места
+ tariffs            | Тарифы на услуги хранения
+ vehicle_categories | Справочник категорий транспортных средств
+ vehicles           | Транспортные средства клиентов
+(9 �����)
+
+SELECT table_name  AS "Таблица",
+       ordinal_position AS "N",
+       column_name AS "Поле",
+       CASE WHEN character_maximum_length IS NOT NULL
+                 THEN data_type || '(' || character_maximum_length || ')'
+            WHEN numeric_precision IS NOT NULL AND data_type = 'numeric'
+                 THEN data_type || '(' || numeric_precision || ',' || numeric_scale || ')'
+            ELSE data_type END AS "Тип данных",
+       is_nullable AS "NULL?",
+       column_default AS "По умолчанию"
+FROM   information_schema.columns
+WHERE  table_schema = 'public'
+ORDER  BY table_name, ordinal_position;
+      Таблица       | N  |      Поле       |         Тип данных          | NULL? |   По умолчанию   
+--------------------+----+-----------------+-----------------------------+-------+------------------
+ clients            |  1 | cl_id           | integer                     | NO    | 
+ clients            |  2 | cl_type         | character(1)                | NO    | 
+ clients            |  3 | cl_name         | text                        | NO    | 
+ clients            |  4 | cl_doc          | character varying(20)       | NO    | 
+ clients            |  5 | cl_phone        | character varying(20)       | NO    | 
+ clients            |  6 | cl_email        | character varying(60)       | YES   | 
+ clients            |  7 | cl_discount     | integer                     | NO    | 0
+ clients            |  8 | cl_reg_date     | date                        | NO    | CURRENT_DATE
+ contracts          |  1 | contr_id        | integer                     | NO    | 
+ contracts          |  2 | contr_number    | character varying(20)       | NO    | 
+ contracts          |  3 | contr_client_id | integer                     | NO    | 
+ contracts          |  4 | contr_veh_id    | integer                     | NO    | 
+ contracts          |  5 | contr_place_id  | integer                     | NO    | 
+ contracts          |  6 | contr_tariff_id | integer                     | NO    | 
+ contracts          |  7 | contr_emp_id    | integer                     | NO    | 
+ contracts          |  8 | contr_date      | date                        | NO    | CURRENT_DATE
+ contracts          |  9 | contr_start     | date                        | NO    | 
+ contracts          | 10 | contr_end       | date                        | YES   | 
+ contracts          | 11 | contr_amount    | numeric(10,2)               | NO    | 
+ contracts          | 12 | contr_status    | text                        | NO    | 'оформлен'::text
+ employees          |  1 | emp_id          | integer                     | NO    | 
+ employees          |  2 | emp_name        | text                        | NO    | 
+ employees          |  3 | emp_position    | text                        | NO    | 
+ employees          |  4 | emp_phone       | character varying(20)       | YES   | 
+ employees          |  5 | emp_hire_date   | date                        | NO    | 
+ employees          |  6 | emp_chief_id    | integer                     | YES   | 
+ passages           |  1 | pass_id         | integer                     | NO    | 
+ passages           |  2 | pass_veh_id     | integer                     | YES   | 
+ passages           |  3 | pass_contr_id   | integer                     | YES   | 
+ passages           |  4 | pass_place_id   | integer                     | YES   | 
+ passages           |  5 | pass_plate_raw  | character varying(12)       | NO    | 
+ passages           |  6 | pass_confidence | numeric(4,3)                | NO    | 
+ passages           |  7 | pass_direction  | character varying(3)        | NO    | 
+ passages           |  8 | pass_time       | timestamp without time zone | NO    | now()
+ passages           |  9 | pass_gate       | character varying(10)       | NO    | 
+ payments           |  1 | pay_id          | integer                     | NO    | 
+ payments           |  2 | pay_receipt_no  | character varying(20)       | NO    | 
+ payments           |  3 | pay_contr_id    | integer                     | NO    | 
+ payments           |  4 | pay_emp_id      | integer                     | NO    | 
+ payments           |  5 | pay_date        | timestamp without time zone | NO    | now()
+ payments           |  6 | pay_sum         | numeric(10,2)               | NO    | 
+ payments           |  7 | pay_method      | text                        | NO    | 
+ payments           |  8 | pay_comment     | text                        | YES   | 
+ places             |  1 | pl_id           | integer                     | NO    | 
+ places             |  2 | pl_sector       | character varying(5)        | NO    | 
+ places             |  3 | pl_number       | integer                     | NO    | 
+ places             |  4 | pl_level        | integer                     | NO    | 
+ places             |  5 | pl_covered      | boolean                     | NO    | false
+ places             |  6 | pl_cat_id       | integer                     | NO    | 
+ places             |  7 | pl_status       | text                        | NO    | 'свободно'::text
+ tariffs            |  1 | tar_id          | integer                     | NO    | 
+ tariffs            |  2 | tar_name        | text                        | NO    | 
+ tariffs            |  3 | tar_period      | text                        | NO    | 
+ tariffs            |  4 | tar_price       | numeric(10,2)               | NO    | 
+ tariffs            |  5 | tar_cat_id      | integer                     | NO    | 
+ tariffs            |  6 | tar_date_from   | date                        | NO    | 
+ tariffs            |  7 | tar_date_to     | date                        | YES   | 
+ vehicle_categories |  1 | cat_id          | integer                     | NO    | 
+ vehicle_categories |  2 | cat_name        | text                        | NO    | 
+ vehicle_categories |  3 | cat_coef        | numeric(4,2)                | NO    | 
+ vehicles           |  1 | veh_id          | integer                     | NO    | 
+ vehicles           |  2 | veh_plate       | character varying(12)       | NO    | 
+ vehicles           |  3 | veh_brand       | text                        | NO    | 
+ vehicles           |  4 | veh_model       | text                        | NO    | 
+ vehicles           |  5 | veh_color       | text                        | YES   | 
+ vehicles           |  6 | veh_cat_id      | integer                     | NO    | 
+ vehicles           |  7 | veh_client_id   | integer                     | NO    | 
+(67 �����)
+
+SELECT conrelid::regclass AS "Таблица",
+       conname            AS "Имя ограничения",
+       CASE contype WHEN 'p' THEN 'PRIMARY KEY'
+                    WHEN 'u' THEN 'UNIQUE'
+                    WHEN 'c' THEN 'CHECK'
+                    WHEN 'f' THEN 'FOREIGN KEY'
+                    WHEN 'x' THEN 'EXCLUDE' END AS "Тип",
+       pg_get_constraintdef(oid) AS "Определение"
+FROM   pg_constraint
+WHERE  connamespace = 'public'::regnamespace
+ORDER  BY 3, 1, 2;
+      Таблица       |   Имя ограничения   |     Тип     |                                                    Определение                                                    
+--------------------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------
+ vehicle_categories | categories_ck_coef  | CHECK       | CHECK ((cat_coef > (0)::numeric))
+ clients            | clients_ck_discount | CHECK       | CHECK (((cl_discount >= 0) AND (cl_discount <= 30)))
+ clients            | clients_ck_type     | CHECK       | CHECK ((cl_type = ANY (ARRAY['Ф'::bpchar, 'Ю'::bpchar])))
+ employees          | employees_ck_chief  | CHECK       | CHECK (((emp_chief_id IS NULL) OR (emp_chief_id <> emp_id)))
+ vehicles           | vehicles_ck_plate   | CHECK       | CHECK (((length((veh_plate)::text) >= 8) AND (length((veh_plate)::text) <= 9)))
+ places             | places_ck_level     | CHECK       | CHECK (((pl_level >= '-2'::integer) AND (pl_level <= 10)))
+ places             | places_ck_number    | CHECK       | CHECK ((pl_number > 0))
+ places             | places_ck_status    | CHECK       | CHECK ((pl_status = ANY (ARRAY['свободно'::text, 'занято'::text, 'ремонт'::text])))
+ tariffs            | tariffs_ck_dates    | CHECK       | CHECK (((tar_date_to IS NULL) OR (tar_date_to >= tar_date_from)))
+ tariffs            | tariffs_ck_period   | CHECK       | CHECK ((tar_period = ANY (ARRAY['час'::text, 'сутки'::text, 'месяц'::text])))
+ tariffs            | tariffs_ck_price    | CHECK       | CHECK ((tar_price > (0)::numeric))
+ contracts          | contracts_ck_amount | CHECK       | CHECK ((contr_amount >= (0)::numeric))
+ contracts          | contracts_ck_dates  | CHECK       | CHECK (((contr_end IS NULL) OR (contr_end >= contr_start)))
+ contracts          | contracts_ck_signed | CHECK       | CHECK ((contr_date <= contr_start))
+ contracts          | contracts_ck_status | CHECK       | CHECK ((contr_status = ANY (ARRAY['оформлен'::text, 'действующий'::text, 'завершён'::text, 'расторгнут'::text])))
+ payments           | payments_ck_method  | CHECK       | CHECK ((pay_method = ANY (ARRAY['наличные'::text, 'карта'::text, 'перевод'::text])))
+ payments           | payments_ck_sum     | CHECK       | CHECK ((pay_sum > (0)::numeric))
+ passages           | passages_ck_conf    | CHECK       | CHECK (((pass_confidence >= (0)::numeric) AND (pass_confidence <= (1)::numeric)))
+ passages           | passages_ck_dir     | CHECK       | CHECK (((pass_direction)::text = ANY ((ARRAY['IN'::character varying, 'OUT'::character varying])::text[])))
+ employees          | employees_fk        | FOREIGN KEY | FOREIGN KEY (emp_chief_id) REFERENCES employees(emp_id) ON UPDATE CASCADE ON DELETE SET NULL
+ vehicles           | vehicles_fk1        | FOREIGN KEY | FOREIGN KEY (veh_client_id) REFERENCES clients(cl_id) ON UPDATE CASCADE ON DELETE CASCADE
+ vehicles           | vehicles_fk2        | FOREIGN KEY | FOREIGN KEY (veh_cat_id) REFERENCES vehicle_categories(cat_id) ON UPDATE CASCADE ON DELETE CASCADE
+ places             | places_fk           | FOREIGN KEY | FOREIGN KEY (pl_cat_id) REFERENCES vehicle_categories(cat_id) ON UPDATE CASCADE ON DELETE CASCADE
+ tariffs            | tariffs_fk          | FOREIGN KEY | FOREIGN KEY (tar_cat_id) REFERENCES vehicle_categories(cat_id) ON UPDATE CASCADE ON DELETE CASCADE
+ contracts          | contracts_fk1       | FOREIGN KEY | FOREIGN KEY (contr_client_id) REFERENCES clients(cl_id) ON UPDATE CASCADE ON DELETE CASCADE
+ contracts          | contracts_fk2       | FOREIGN KEY | FOREIGN KEY (contr_veh_id) REFERENCES vehicles(veh_id) ON UPDATE CASCADE ON DELETE CASCADE
+ contracts          | contracts_fk3       | FOREIGN KEY | FOREIGN KEY (contr_place_id) REFERENCES places(pl_id) ON UPDATE CASCADE ON DELETE CASCADE
+ contracts          | contracts_fk4       | FOREIGN KEY | FOREIGN KEY (contr_tariff_id) REFERENCES tariffs(tar_id) ON UPDATE CASCADE ON DELETE CASCADE
+ contracts          | contracts_fk5       | FOREIGN KEY | FOREIGN KEY (contr_emp_id) REFERENCES employees(emp_id) ON UPDATE CASCADE ON DELETE CASCADE
+ payments           | payments_fk1        | FOREIGN KEY | FOREIGN KEY (pay_contr_id) REFERENCES contracts(contr_id) ON UPDATE CASCADE ON DELETE CASCADE
+ payments           | payments_fk2        | FOREIGN KEY | FOREIGN KEY (pay_emp_id) REFERENCES employees(emp_id) ON UPDATE CASCADE ON DELETE CASCADE
+ passages           | passages_fk1        | FOREIGN KEY | FOREIGN KEY (pass_veh_id) REFERENCES vehicles(veh_id) ON UPDATE CASCADE ON DELETE SET NULL
+ passages           | passages_fk2        | FOREIGN KEY | FOREIGN KEY (pass_contr_id) REFERENCES contracts(contr_id) ON UPDATE CASCADE ON DELETE SET NULL
+ passages           | passages_fk3        | FOREIGN KEY | FOREIGN KEY (pass_place_id) REFERENCES places(pl_id) ON UPDATE CASCADE ON DELETE SET NULL
+ vehicle_categories | categories_pk       | PRIMARY KEY | PRIMARY KEY (cat_id)
+ clients            | clients_pk          | PRIMARY KEY | PRIMARY KEY (cl_id)
+ employees          | employees_pk        | PRIMARY KEY | PRIMARY KEY (emp_id)
+ vehicles           | vehicles_pk         | PRIMARY KEY | PRIMARY KEY (veh_id)
+ places             | places_pk           | PRIMARY KEY | PRIMARY KEY (pl_id)
+ tariffs            | tariffs_pk          | PRIMARY KEY | PRIMARY KEY (tar_id)
+ contracts          | contracts_pk        | PRIMARY KEY | PRIMARY KEY (contr_id)
+ payments           | payments_pk         | PRIMARY KEY | PRIMARY KEY (pay_id)
+ passages           | passages_pk         | PRIMARY KEY | PRIMARY KEY (pass_id)
+ vehicle_categories | categories_uk       | UNIQUE      | UNIQUE (cat_name)
+ clients            | clients_uk          | UNIQUE      | UNIQUE (cl_doc)
+ vehicles           | vehicles_uk         | UNIQUE      | UNIQUE (veh_plate)
+ places             | places_uk           | UNIQUE      | UNIQUE (pl_sector, pl_number)
+ tariffs            | tariffs_uk          | UNIQUE      | UNIQUE (tar_name, tar_cat_id, tar_date_from)
+ contracts          | contracts_uk        | UNIQUE      | UNIQUE (contr_number)
+ payments           | payments_uk         | UNIQUE      | UNIQUE (pay_receipt_no)
+ passages           | passages_uk         | UNIQUE      | UNIQUE (pass_plate_raw, pass_time, pass_direction)
+(51 ������)
+
+SELECT CASE contype WHEN 'p' THEN 'PRIMARY KEY (целостность по сущностям)'
+                    WHEN 'u' THEN 'UNIQUE (потенциальные ключи)'
+                    WHEN 'c' THEN 'CHECK (семантическая целостность)'
+                    WHEN 'f' THEN 'FOREIGN KEY (ссылочная целостность)'
+                    WHEN 'x' THEN 'EXCLUDE (бизнес-правила)' END AS "Вид ограничения",
+       count(*) AS "Количество"
+FROM   pg_constraint
+WHERE  connamespace = 'public'::regnamespace
+GROUP  BY contype
+ORDER  BY 2 DESC;
+            Вид ограничения             | Количество 
+----------------------------------------+------------
+ CHECK (семантическая целостность)      |         19
+ FOREIGN KEY (ссылочная целостность)    |         15
+ PRIMARY KEY (целостность по сущностям) |          9
+ UNIQUE (потенциальные ключи)           |          8
+(4 ������)
+
+SELECT conname             AS "Внешний ключ",
+       conrelid::regclass  AS "Дочерняя таблица",
+       confrelid::regclass AS "Родительская таблица",
+       CASE confdeltype WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT'
+                        WHEN 'c' THEN 'CASCADE'   WHEN 'n' THEN 'SET NULL'
+                        WHEN 'd' THEN 'SET DEFAULT' END AS "ON DELETE",
+       CASE confupdtype WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT'
+                        WHEN 'c' THEN 'CASCADE'   WHEN 'n' THEN 'SET NULL'
+                        WHEN 'd' THEN 'SET DEFAULT' END AS "ON UPDATE"
+FROM   pg_constraint
+WHERE  contype = 'f' AND connamespace = 'public'::regnamespace
+ORDER  BY 2, 1;
+ Внешний ключ  | Дочерняя таблица | Родительская таблица | ON DELETE | ON UPDATE 
+---------------+------------------+----------------------+-----------+-----------
+ employees_fk  | employees        | employees            | SET NULL  | CASCADE
+ vehicles_fk1  | vehicles         | clients              | CASCADE   | CASCADE
+ vehicles_fk2  | vehicles         | vehicle_categories   | CASCADE   | CASCADE
+ places_fk     | places           | vehicle_categories   | CASCADE   | CASCADE
+ tariffs_fk    | tariffs          | vehicle_categories   | CASCADE   | CASCADE
+ contracts_fk1 | contracts        | clients              | CASCADE   | CASCADE
+ contracts_fk2 | contracts        | vehicles             | CASCADE   | CASCADE
+ contracts_fk3 | contracts        | places               | CASCADE   | CASCADE
+ contracts_fk4 | contracts        | tariffs              | CASCADE   | CASCADE
+ contracts_fk5 | contracts        | employees            | CASCADE   | CASCADE
+ payments_fk1  | payments         | contracts            | CASCADE   | CASCADE
+ payments_fk2  | payments         | employees            | CASCADE   | CASCADE
+ passages_fk1  | passages         | vehicles             | SET NULL  | CASCADE
+ passages_fk2  | passages         | contracts            | SET NULL  | CASCADE
+ passages_fk3  | passages         | places               | SET NULL  | CASCADE
+(15 �����)
+
+SELECT tablename AS "Таблица", indexname AS "Индекс", indexdef AS "Определение"
+FROM   pg_indexes
+WHERE  schemaname = 'public'
+ORDER  BY tablename, indexname;
+      Таблица       |    Индекс     |                                                Определение                                                 
+--------------------+---------------+------------------------------------------------------------------------------------------------------------
+ clients            | clients_pk    | CREATE UNIQUE INDEX clients_pk ON public.clients USING btree (cl_id)
+ clients            | clients_uk    | CREATE UNIQUE INDEX clients_uk ON public.clients USING btree (cl_doc)
+ contracts          | contracts_pk  | CREATE UNIQUE INDEX contracts_pk ON public.contracts USING btree (contr_id)
+ contracts          | contracts_uk  | CREATE UNIQUE INDEX contracts_uk ON public.contracts USING btree (contr_number)
+ employees          | employees_pk  | CREATE UNIQUE INDEX employees_pk ON public.employees USING btree (emp_id)
+ passages           | passages_pk   | CREATE UNIQUE INDEX passages_pk ON public.passages USING btree (pass_id)
+ passages           | passages_uk   | CREATE UNIQUE INDEX passages_uk ON public.passages USING btree (pass_plate_raw, pass_time, pass_direction)
+ payments           | payments_pk   | CREATE UNIQUE INDEX payments_pk ON public.payments USING btree (pay_id)
+ payments           | payments_uk   | CREATE UNIQUE INDEX payments_uk ON public.payments USING btree (pay_receipt_no)
+ places             | places_pk     | CREATE UNIQUE INDEX places_pk ON public.places USING btree (pl_id)
+ places             | places_uk     | CREATE UNIQUE INDEX places_uk ON public.places USING btree (pl_sector, pl_number)
+ tariffs            | tariffs_pk    | CREATE UNIQUE INDEX tariffs_pk ON public.tariffs USING btree (tar_id)
+ tariffs            | tariffs_uk    | CREATE UNIQUE INDEX tariffs_uk ON public.tariffs USING btree (tar_name, tar_cat_id, tar_date_from)
+ vehicle_categories | categories_pk | CREATE UNIQUE INDEX categories_pk ON public.vehicle_categories USING btree (cat_id)
+ vehicle_categories | categories_uk | CREATE UNIQUE INDEX categories_uk ON public.vehicle_categories USING btree (cat_name)
+ vehicles           | vehicles_pk   | CREATE UNIQUE INDEX vehicles_pk ON public.vehicles USING btree (veh_id)
+ vehicles           | vehicles_uk   | CREATE UNIQUE INDEX vehicles_uk ON public.vehicles USING btree (veh_plate)
+(17 �����)
+
+BEGIN;
+BEGIN
+SELECT 'ДО удаления клиента' AS "Этап",
+       (SELECT count(*) FROM vehicles  WHERE veh_client_ID = 1)   AS "ТС клиента 1",
+       (SELECT count(*) FROM contracts WHERE contr_client_ID = 1) AS "Договоры клиента 1",
+       (SELECT count(*) FROM payments) AS "Квитанций всего",
+       (SELECT count(*) FROM passages WHERE pass_veh_ID IN (1, 9)) AS "Проезды его ТС";
+        Этап         | ТС клиента 1 | Договоры клиента 1 | Квитанций всего | Проезды его ТС 
+---------------------+--------------+--------------------+-----------------+----------------
+ ДО удаления клиента |            2 |                  2 |              16 |              5
+(1 ������)
+
+DELETE FROM clients WHERE cl_ID = 1;
+DELETE 1
+SELECT 'ПОСЛЕ удаления клиента' AS "Этап",
+       (SELECT count(*) FROM vehicles  WHERE veh_client_ID = 1)   AS "ТС клиента 1",
+       (SELECT count(*) FROM contracts WHERE contr_client_ID = 1) AS "Договоры клиента 1",
+       (SELECT count(*) FROM payments) AS "Квитанций всего",
+       (SELECT count(*) FROM passages WHERE pass_plate_raw IN ('А123ВС55','С369МН155')) AS "Проезды сохранены";
+          Этап          | ТС клиента 1 | Договоры клиента 1 | Квитанций всего | Проезды сохранены 
+------------------------+--------------+--------------------+-----------------+-------------------
+ ПОСЛЕ удаления клиента |            0 |                  0 |              11 |                 5
+(1 ������)
+
+SELECT pass_ID AS "Проезд", pass_plate_raw AS "Номер",
+       pass_veh_ID AS "ТС", pass_contr_ID AS "Договор", pass_place_ID AS "Место"
+FROM   passages
+WHERE  pass_plate_raw IN ('А123ВС55','С369МН155')
+ORDER  BY pass_ID;
+ Проезд |   Номер   | ТС | Договор | Место 
+--------+-----------+----+---------+-------
+      1 | А123ВС55  |    |         |     1
+      2 | А123ВС55  |    |         |     1
+     17 | С369МН155 |    |         |     5
+     19 | А123ВС55  |    |         |     1
+     20 | А123ВС55  |    |         |     1
+(5 �����)
+
+ROLLBACK;
+ROLLBACK
+BEGIN;
+BEGIN
+SELECT 'ДО удаления категории' AS "Этап",
+       (SELECT count(*) FROM vehicles)  AS "ТС",
+       (SELECT count(*) FROM places)    AS "Мест",
+       (SELECT count(*) FROM tariffs)   AS "Тарифов",
+       (SELECT count(*) FROM contracts) AS "Договоров",
+       (SELECT count(*) FROM payments)  AS "Квитанций";
+         Этап          | ТС | Мест | Тарифов | Договоров | Квитанций 
+-----------------------+----+------+---------+-----------+-----------
+ ДО удаления категории | 10 |   12 |       7 |        10 |        16
+(1 ������)
+
+DELETE FROM vehicle_categories WHERE cat_ID = 1;
+DELETE 1
+SELECT 'ПОСЛЕ удаления категории' AS "Этап",
+       (SELECT count(*) FROM vehicles)  AS "ТС",
+       (SELECT count(*) FROM places)    AS "Мест",
+       (SELECT count(*) FROM tariffs)   AS "Тарифов",
+       (SELECT count(*) FROM contracts) AS "Договоров",
+       (SELECT count(*) FROM payments)  AS "Квитанций";
+           Этап           | ТС | Мест | Тарифов | Договоров | Квитанций 
+--------------------------+----+------+---------+-----------+-----------
+ ПОСЛЕ удаления категории |  6 |    6 |       3 |         6 |         9
+(1 ������)
+
+ROLLBACK;
+ROLLBACK
+SELECT c.contr_number AS "Договор",
+       cl.cl_name     AS "Клиент",
+       v.veh_plate    AS "Госномер",
+       p.pl_sector || '-' || p.pl_number AS "Место",
+       c.contr_amount AS "Начислено",
+       COALESCE(sum(pay.pay_sum), 0) AS "Оплачено",
+       c.contr_amount - COALESCE(sum(pay.pay_sum), 0) AS "Долг",
+       count(pay.pay_ID) AS "Квитанций"
+FROM   contracts c
+JOIN   clients  cl ON cl.cl_ID = c.contr_client_ID
+JOIN   vehicles v  ON v.veh_ID = c.contr_veh_ID
+JOIN   places   p  ON p.pl_ID  = c.contr_place_ID
+LEFT   JOIN payments pay ON pay.pay_contr_ID = c.contr_ID
+GROUP  BY c.contr_ID, c.contr_number, cl.cl_name, v.veh_plate,
+          p.pl_sector, p.pl_number, c.contr_amount
+ORDER  BY c.contr_number;
+  Договор   |          Клиент          | Госномер  | Место | Начислено | Оплачено |   Долг   | Квитанций 
+------------+--------------------------+-----------+-------+-----------+----------+----------+-----------
+ Д-2024/001 | Лебедев Игорь Олегович   | А123ВС55  | A-1   |  25650.00 | 25650.00 |     0.00 |         3
+ Д-2024/002 | Сафина Марина Рустамовна | В456ЕК55  | A-2   |  27000.00 | 27000.00 |     0.00 |         2
+ Д-2024/003 | ООО «Сибтранс»           | Е789МН55  | B-1   |  97200.00 | 97200.00 |     0.00 |         2
+ Д-2024/004 | Круглов Антон Павлович   | К321ОР55  | A-4   |  33000.00 | 33000.00 |     0.00 |         1
+ Д-2024/005 | Нечаева Елена Борисовна  | М654СТ55  | C-1   |  12825.00 | 12825.00 |     0.00 |         1
+ Д-2024/006 | АО «Омскстрой»           | Н987УХ55  | B-2   |  91800.00 | 45900.00 | 45900.00 |         1
+ Д-2024/007 | Тимофеев Роман Андреевич | О147АВ55  | B-3   |  15000.00 | 15000.00 |     0.00 |         2
+ Д-2024/008 | Жданова Полина Сергеевна | Р258ЕК55  | C-3   |  16500.00 |  5500.00 | 11000.00 |         1
+ Д-2024/009 | Лебедев Игорь Олегович   | С369МН155 | A-5   |   5225.00 | 10450.00 | -5225.00 |         2
+ Д-2024/010 | Сафина Марина Рустамовна | Т741ОР55  | A-3   |   3500.00 |  3500.00 |     0.00 |         1
+(10 �����)
+
+SELECT ps.pass_time      AS "Время",
+       ps.pass_direction AS "Направление",
+       ps.pass_plate_raw AS "Распознанный номер",
+       ps.pass_confidence AS "Достоверность",
+       cl.cl_name        AS "Клиент",
+       ps.pass_gate      AS "Ворота"
+FROM   passages ps
+LEFT   JOIN vehicles v  ON v.veh_ID = ps.pass_veh_ID
+LEFT   JOIN clients  cl ON cl.cl_ID = v.veh_client_ID
+ORDER  BY ps.pass_time;
+        Время        | Направление | Распознанный номер | Достоверность |          Клиент          | Ворота 
+---------------------+-------------+--------------------+---------------+--------------------------+--------
+ 2024-02-01 10:22:00 | IN          | А123ВС55           |         0.981 | Лебедев Игорь Олегович   | GATE-1
+ 2024-02-01 19:05:00 | OUT         | А123ВС55           |         0.975 | Лебедев Игорь Олегович   | GATE-2
+ 2024-02-05 11:40:00 | IN          | В456ЕК55           |         0.964 | Сафина Марина Рустамовна | GATE-1
+ 2024-02-05 12:03:00 | IN          | Т777ТТ77           |         0.642 |                          | GATE-1
+ 2024-02-05 12:40:00 | OUT         | Т777ТТ77           |         0.655 |                          | GATE-2
+ 2024-02-05 20:11:00 | OUT         | В456ЕК55           |         0.958 | Сафина Марина Рустамовна | GATE-2
+ 2024-02-10 07:15:00 | IN          | Е789МН55           |         0.933 | ООО «Сибтранс»           | GATE-3
+ 2024-02-10 18:47:00 | OUT         | Е789МН55           |         0.921 | ООО «Сибтранс»           | GATE-3
+ 2024-03-01 09:02:00 | IN          | К321ОР55           |         0.988 | Круглов Антон Павлович   | GATE-1
+ 2024-03-01 21:33:00 | OUT         | К321ОР55           |         0.979 | Круглов Антон Павлович   | GATE-2
+ 2024-03-05 10:25:00 | IN          | М654СТ55           |         0.946 | Нечаева Елена Борисовна  | GATE-1
+ 2024-03-05 22:10:00 | OUT         | М654СТ55           |         0.939 | Нечаева Елена Борисовна  | GATE-2
+ 2024-03-15 06:40:00 | IN          | Н987УХ55           |         0.902 | АО «Омскстрой»           | GATE-3
+ 2024-04-02 10:05:00 | IN          | О147АВ55           |         0.871 | Тимофеев Роман Андреевич | GATE-1
+ 2024-04-20 12:30:00 | IN          | Р258ЕК55           |         0.957 | Жданова Полина Сергеевна | GATE-1
+ 2024-04-20 23:12:00 | OUT         | ?258ЕК55           |         0.418 |                          | GATE-2
+ 2024-05-06 08:55:00 | IN          | С369МН155          |         0.968 | Лебедев Игорь Олегович   | GATE-1
+ 2024-05-15 17:20:00 | IN          | Т741ОР55           |         0.952 | Сафина Марина Рустамовна | GATE-1
+ 2024-06-02 09:30:00 | IN          | А123ВС55           |         0.984 | Лебедев Игорь Олегович   | GATE-1
+ 2024-06-02 18:58:00 | OUT         | А123ВС55           |         0.977 | Лебедев Игорь Олегович   | GATE-2
+(20 �����)
+
+SELECT e.emp_name   AS "Сотрудник",
+       e.emp_position AS "Должность",
+       ch.emp_name  AS "Руководитель"
+FROM   employees e
+LEFT   JOIN employees ch ON ch.emp_ID = e.emp_chief_ID
+ORDER  BY e.emp_ID;
+       Сотрудник        |   Должность    |    Руководитель    
+------------------------+----------------+--------------------
+ Гордеев Пётр Ильич     | администратор  | 
+ Сомова Анна Львовна    | кассир         | Гордеев Пётр Ильич
+ Ким Дмитрий Сергеевич  | старший кассир | Гордеев Пётр Ильич
+ Ветров Илья Романович  | охранник       | Гордеев Пётр Ильич
+ Пащенко Ольга Ивановна | охранник       | Гордеев Пётр Ильич
+(5 �����)
+
+SELECT p.pl_sector || '-' || p.pl_number AS "Место",
+       vc.cat_name  AS "Категория места",
+       p.pl_status  AS "Статус",
+       v.veh_plate  AS "Госномер ТС",
+       c.contr_number AS "Договор",
+       c.contr_start  AS "С",
+       c.contr_end    AS "По"
+FROM   places p
+JOIN   vehicle_categories vc ON vc.cat_ID = p.pl_cat_ID
+LEFT   JOIN contracts c ON c.contr_place_ID = p.pl_ID
+                       AND c.contr_status IN ('оформлен','действующий')
+LEFT   JOIN vehicles  v ON v.veh_ID = c.contr_veh_ID
+ORDER  BY p.pl_sector, p.pl_number;
+ Место | Категория места |  Статус  | Госномер ТС |  Договор   |     С      |     По     
+-------+-----------------+----------+-------------+------------+------------+------------
+ A-1   | Легковой        | занято   | А123ВС55    | Д-2024/001 | 2024-02-01 | 2024-07-31
+ A-2   | Легковой        | занято   | В456ЕК55    | Д-2024/002 | 2024-02-05 | 2024-08-04
+ A-3   | Легковой        | свободно |             |            |            | 
+ A-4   | Внедорожник     | занято   | К321ОР55    | Д-2024/004 | 2024-03-01 | 2024-08-31
+ A-5   | Внедорожник     | занято   | С369МН155   | Д-2024/009 | 2024-05-06 | 
+ B-1   | Грузовой        | занято   | Е789МН55    | Д-2024/003 | 2024-02-10 | 2025-02-09
+ B-2   | Грузовой        | занято   | Н987УХ55    | Д-2024/006 | 2024-03-15 | 2025-03-14
+ B-3   | Мотоцикл        | занято   | О147АВ55    | Д-2024/007 | 2024-04-02 | 2024-10-01
+ C-1   | Легковой        | свободно |             |            |            | 
+ C-2   | Легковой        | свободно |             |            |            | 
+ C-3   | Внедорожник     | свободно |             |            |            | 
+ D-1   | Легковой        | ремонт   |             |            |            | 
+(12 �����)
+
