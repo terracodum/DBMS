@@ -26,7 +26,9 @@
 |---|---|
 | [rgr/lab2_parking_db.sql](rgr/lab2_parking_db.sql) | создание базы данных |
 | [rgr/lab3_parking_tables.sql](rgr/lab3_parking_tables.sql) | 9 таблиц, ограничения UNIQUE / DEFAULT / CHECK, 15 внешних ключей |
-| [rgr/lab4_parking_data.sql](rgr/lab4_parking_data.sql) | вставка, обновление и удаление данных |
+| [rgr/lab3_parking_data.sql](rgr/lab3_parking_data.sql) | вставка, обновление и удаление данных |
+| [rgr/lab4_parking_array_json.sql](rgr/lab4_parking_array_json.sql) | лабораторная работа № 4 — столбцы с массивом (`text[]`) и JSON (`jsonb`), обработка данных |
+| [rgr/lab4_textbook_example.sql](rgr/lab4_textbook_example.sql) | лабораторная работа № 4, п. 1 — учебный пример из пособия (массивы и JSON) |
 | [rgr/demo.sql](rgr/demo.sql) | демонстрация выполненной работы по пунктам задания |
 | [rgr/test/](rgr/test/) | проверка ограничений целостности, контроль структуры БД |
 | [rgr/ОТЧЁТ_РГР_Автостоянка.md](rgr/ОТЧЁТ_РГР_Автостоянка.md) | отчёт по работе |

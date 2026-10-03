@@ -79,7 +79,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 3. Обновить узел Databases (правая кнопка → Refresh), открыть Query Tool
    уже на базе `parking`.
 4. Выполнить `lab3_parking_tables.sql` целиком (F5).
-5. Выполнить `lab4_parking_data.sql` — заполнение таблиц данными,
+5. Выполнить `lab3_parking_data.sql` — заполнение таблиц данными,
    обновление и удаление (удаления отменяются командой ROLLBACK).
 6. `test\integrity_tests.sql` выполнять **по одной инструкции**: выделить
    инструкцию мышью и нажать F5. Каждая должна дать ошибку — это и есть
@@ -101,7 +101,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 |---|---|
 | `lab2_parking_db.sql` | лабораторная работа № 2 — создание базы данных `parking` |
 | `lab3_parking_tables.sql` | лабораторная работа № 3 — 9 таблиц, ограничения UNIQUE / DEFAULT / CHECK, 15 внешних ключей, комментарии |
-| `lab4_parking_data.sql` | лабораторная работа № 4 — вставка (91 строка), обновление и удаление данных |
+| `lab3_parking_data.sql` | лабораторная работа № 3 — вставка (91 строка), обновление и удаление данных |
+| `lab4_parking_array_json.sql` | лабораторная работа № 4 — таблицы `contract_options` (массив) и `passage_events` (JSON), заполнение, обработка данных |
+| `lab4_textbook_example.sql` | лабораторная работа № 4, п. 1 — учебный пример из пособия, стр. 91–100 (таблицы `schedules`, `hobbies`) |
 
 **Вспомогательные файлы** (каталог `test`) — нужны для раздела
 «Результаты» отчёта, самой работой не являются:

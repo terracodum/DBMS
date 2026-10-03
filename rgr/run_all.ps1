@@ -62,7 +62,9 @@ function Invoke-Sql {
 Invoke-Sql -Db 'postgres' -File 'lab2_parking_db.sql'
 Invoke-Sql -Db 'parking'  -File 'lab3_parking_tables.sql'
 
-Invoke-Sql -Db 'parking'  -File 'lab4_parking_data.sql'
+Invoke-Sql -Db 'parking'  -File 'lab3_parking_data.sql'
+Invoke-Sql -Db 'parking'  -File 'lab4_parking_array_json.sql'
+Invoke-Sql -Db 'parking'  -File 'lab4_textbook_example.sql'
 
 # --- вспомогательные файлы для раздела «Результаты» отчёта ---
 
