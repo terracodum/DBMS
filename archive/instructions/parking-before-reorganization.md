@@ -1,4 +1,18 @@
+> Историческая инструкция до реорганизации. Актуальный порядок работы — в [README](../../README.md).
+
 # РГР «Автостоянка», вариант 11 — как всё запустить
+
+## Основной запуск — Jupyter
+
+Рабочий формат — ноутбуки. Порядок: [ЛР2](../../labs/lab02/lab2_parking_db.ipynb) →
+[ЛР3](../../labs/lab03/lab3_parking.ipynb) → [ЛР4](../../labs/lab04/lab4_parking.ipynb) →
+[ЛР5, учебные примеры](../../labs/lab05/lab5_textbook_example.ipynb) и
+[ЛР5, индивидуальные запросы](../../labs/lab05/lab5_parking_queries.ipynb).
+Установка зависимостей из корня проекта:
+`python3 -m pip install -r requirements.txt`.
+Подробности подключения и повторного запуска — [в основном README](README-before-reorganization.md#работа-в-jupyter).
+Для готовой заполненной БД начинайте с ЛР5. Прежние способы запуска ниже
+оставлены для справки; `run_all.sh` пересоздаёт БД и для работы с ноутбуками не нужен.
 
 ## 0. Что показывать на защите
 
@@ -104,6 +118,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 | `lab3_parking_data.sql` | лабораторная работа № 3 — вставка (91 строка), обновление и удаление данных |
 | `lab4_parking_array_json.sql` | лабораторная работа № 4 — таблицы `contract_options` (массив) и `passage_events` (JSON), заполнение, обработка данных |
 | `lab4_textbook_example.sql` | лабораторная работа № 4, п. 1 — учебный пример из пособия, стр. 91–100 (таблицы `schedules`, `hobbies`) |
+| `lab5_parking_queries.sql` | лабораторная работа № 5, п. 2 — запросы 2.1–2.12 (соединения, DISTINCT, BETWEEN, LIMIT, OFFSET, LIKE, POSIX, агрегаты, подзапросы, CASE, GROUP BY / HAVING) |
+| `lab5_textbook_example.ipynb` | ноутбук Jupyter: учебные примеры лабы 5 одним запуском (нужен `pip install "psycopg[binary]" pandas`) |
+| `lab5_parking_queries.ipynb` | ноутбук Jupyter: запросы 2.1–2.12 лабы 5 одним запуском |
 
 **Вспомогательные файлы** (каталог `test`) — нужны для раздела
 «Результаты» отчёта, самой работой не являются:

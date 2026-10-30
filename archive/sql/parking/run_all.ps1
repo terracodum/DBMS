@@ -3,7 +3,7 @@
 # Автоматический прогон всех SQL-скриптов с сохранением протокола
 #
 # Запуск из PowerShell:
-#     cd X:\Coding\work\DBMS\rgr
+#     cd X:\Coding\work\DBMS\archive\sql\parking
 #     .\run_all.ps1
 # Если пароль суперпользователя postgres отличается от "postgres":
 #     .\run_all.ps1 -Password "ваш_пароль"
@@ -33,7 +33,7 @@ if (-not $psql) {
 }
 Write-Host "Используется: $psql" -ForegroundColor Cyan
 
-$logDir = Join-Path $PSScriptRoot "log"
+$logDir = Join-Path $PSScriptRoot "../../logs"
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
 function Invoke-Sql {
@@ -65,6 +65,7 @@ Invoke-Sql -Db 'parking'  -File 'lab3_parking_tables.sql'
 Invoke-Sql -Db 'parking'  -File 'lab3_parking_data.sql'
 Invoke-Sql -Db 'parking'  -File 'lab4_parking_array_json.sql'
 Invoke-Sql -Db 'parking'  -File 'lab4_textbook_example.sql'
+Invoke-Sql -Db 'parking'  -File 'lab5_parking_queries.sql'
 
 # --- вспомогательные файлы для раздела «Результаты» отчёта ---
 

@@ -4,7 +4,7 @@
 # Прогон всех SQL-скриптов на macOS / Linux (аналог run_all.ps1)
 #
 # Запуск:
-#     cd rgr
+#     cd archive/sql/parking
 #     ./run_all.sh
 # Параметры подключения - через переменные окружения:
 #     PGHOST (127.0.0.1), PGPORT (5432), PGUSER (текущий пользователь)
@@ -43,6 +43,7 @@ run parking lab3_parking_tables.sql
 run parking lab3_parking_data.sql
 run parking lab4_parking_array_json.sql
 run parking lab4_textbook_example.sql
+run parking lab5_parking_queries.sql
 
 # integrity_tests.sql содержит заведомо ошибочные инструкции
 run parking test/integrity_tests.sql allow-errors
