@@ -18,3 +18,12 @@
 Сохранённые DOCX не пересобирались после редакторской уборки Markdown.
 Для новых Word-отчётов использовать `md-to-docx-academic`.
 [Порядок запуска](../../README.md#3-запуск) · [Договорённости](../../docs/CONVENTIONS.md).
+
+## SQL-примеры
+
+- [lab5_parking_queries.sql](lab5_parking_queries.sql) — пример для `parking`.
+- [lab5_textbook_example.sql](lab5_textbook_example.sql) — пример для `parking`.
+
+SQL содержит комментарии, определения и вызовы; его можно открыть в pgAdmin
+или запустить через `psql`. Точная команда указана в начале каждого файла.
+Оба файла заканчиваются `ROLLBACK`: временные учебные изменения отменяются.

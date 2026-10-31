@@ -1,7 +1,7 @@
 # Архив прежнего рабочего процесса
 
 - [sql/parking/](sql/parking/) — SQL автостоянки, demo.sql, проверки и старые прогоны.
-- Примеры sales сохранены в ноутбуках [ЛР2](../labs/lab02/lab2_sales_db.ipynb) и [ЛР3](../labs/lab03/lab3_sales_tables.ipynb); отдельного SQL-каталога сейчас нет.
+- Примеры sales доступны в [ЛР2](../labs/lab02/README.md) и [ЛР3](../labs/lab03/README.md): ноутбуки и актуальные SQL лежат рядом в labs/.
 - [logs/](logs/) — ранее полученные протоколы выполнения.
 - [full_version/](full_version/) — расширенная версия РГР с EXCLUDE и индексами.
 - [instructions/](instructions/) — прежние README для справки.
